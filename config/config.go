@@ -13,7 +13,7 @@ import (
 var ServiceName = "user_service"
 
 type Secrets struct {
-	User     string `json:"USER" envconfig:"USER"`
+	Db_User  string `json:"USER" envconfig:"DB_USER"`
 	DbName   string `json:"DBNAME" envconfig:"DBNAME"`
 	Password string `json:"PASSWORD" envconfig:"PASSWORD"`
 	Host     string `json:"HOST" envconfig:"HOST"`
@@ -33,7 +33,7 @@ func init() {
 
 	ss = Secrets{}
 
-	ss.User = os.Getenv("USER")
+	ss.Db_User = os.Getenv("DB_USER")
 	ss.DbName = os.Getenv("DBNAME")
 	ss.Password = os.Getenv("PASSWORD")
 	ss.Host = os.Getenv("HOST")
