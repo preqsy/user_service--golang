@@ -8,23 +8,21 @@ import (
 	"context"
 	"fmt"
 	"user_service/graph/model"
+	"user_service/models"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
-}
-
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, userData model.NewUser) (*model.UserResponse, error) {
+	users := models.User{Name: userData.Name, Email: userData.Email, Password: userData.Password}
+	rsp, err := r.service.SaveUser(users)
+	if err != nil {
+		return nil, fmt.Errorf("Error while saving data %s", err)
+	}
+	userResponse := model.UserResponse{Email: &rsp.Email, Password: &rsp.Password, Name: &rsp.Name}
+	return &userResponse, nil
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
