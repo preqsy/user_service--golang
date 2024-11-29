@@ -1,18 +1,25 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"user_service/config"
+	"user_service/core"
+	datastore "user_service/database"
 	database "user_service/database/postres"
 
-	// "user_service/datastore"
 	"user_service/models"
 )
 
 func main() {
 	secrets := config.GetSecrets()
+	var datastore datastore.Datastore
 
-	_, err := database.ConnectDB(secrets.Host, secrets.Db_User, secrets.Password, secrets.DbName, secrets.Port).SaveUser(models.User{Email: "obbypreciouss2yk44@gmail.com", Name: "Obinna", Password: "1111"})
-	fmt.Println(err)
+	datastore, err := database.ConnectDB(secrets.Host, secrets.Db_User, secrets.Password, secrets.DbName, secrets.Port)
+	if err != nil {
+		log.Fatal("Error connecting to the database")
+	}
+
+	service := core.CoreService(datastore)
+	service.SaveUser(models.User{Email: "preciousohanyere08@gmail.com", Name: "Obinna", Password: "1111"})
 
 }
