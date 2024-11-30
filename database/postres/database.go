@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"user_service/models"
+	"user_service/utils"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
@@ -19,6 +20,7 @@ type PostgresStore struct {
 func (p PostgresStore) SaveUser(userData models.User) (*models.User, error) {
 
 	userData.TimeCreated = time.Now()
+	userData.Password = utils.EncryptPassword(userData.Password)
 	result := p.client.Create(&userData)
 
 	if result.Error != nil {
