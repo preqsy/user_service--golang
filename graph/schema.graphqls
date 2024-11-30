@@ -9,7 +9,7 @@ input NewUser {
 }
 
 type UserResponse {
-  id: ID
+  id: Int
   name: String
   email: String
   password: String
