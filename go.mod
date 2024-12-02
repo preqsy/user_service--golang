@@ -10,7 +10,11 @@ require (
 	gorm.io/gorm v1.25.12
 )
 
-require golang.org/x/sys v0.27.0 // indirect
+require (
+	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
+)
 
 require (
 	github.com/agnivade/levenshtein v1.2.0 // indirect
