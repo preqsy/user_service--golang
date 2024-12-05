@@ -29,6 +29,7 @@ func (p PostgresStore) SaveUser(userData models.User) (*models.User, error) {
 
 	return &userData, nil
 }
+
 func ConnectDB(host, user, password, dbName, port string) (*PostgresStore, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC", host, user, password, dbName, port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
