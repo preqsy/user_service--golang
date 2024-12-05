@@ -4,25 +4,22 @@ import (
 	"context"
 	"time"
 	datastore "user_service/database"
+	"user_service/events"
 	"user_service/events/topics"
 	"user_service/models"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+	"encoding/json"
+
 	"github.com/sirupsen/logrus"
 )
 
 type Service struct {
 	datastore datastore.Datastore
+	rabbitmq  *events.RabbitmqService
 }
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		logrus.Panicf("%s: %s", msg, err)
-	}
-}
-
-func CoreService(datastore datastore.Datastore) *Service {
-	return &Service{datastore: datastore}
+func CoreService(datastore datastore.Datastore, rabbitmq *events.RabbitmqService) *Service {
+	return &Service{datastore: datastore, rabbitmq: rabbitmq}
 }
 
 func (s Service) SaveUser(userData models.User) (*models.User, error) {
@@ -36,35 +33,16 @@ func (s Service) SaveUser(userData models.User) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5673")
-	failOnError(err, "Failed to connect to Rabbitmq")
-	defer conn.Close()
-
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-
-	q, err := ch.QueueDeclare(
-		topics.NewUserCreated,
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	failOnError(err, "Failed to open a Queue")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	ch.PublishWithContext(
-		ctx,
-		"",
-		q.Name,
-		false,
-		false,
-		amqp.Publishing{
-			Body:        []byte("body"),
-			ContentType: "text/plain",
-		},
-	)
-	logrus.Info("[*] Queue message sent successfully")
+
+	data, err := json.Marshal(&user)
+	if err != nil {
+		logrus.Error("Error while converting data to json")
+		return nil, err
+	}
+
+	s.rabbitmq.PublishNewUserCreated(ctx, data, topics.NewUserCreated)
+
 	return user, nil
 }

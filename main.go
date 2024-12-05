@@ -5,6 +5,7 @@ import (
 	"user_service/config"
 	"user_service/core"
 	database "user_service/database/postres"
+	"user_service/events"
 
 	"net/http"
 	"user_service/graph"
@@ -19,7 +20,8 @@ func main() {
 	const defaultPort = "8080"
 
 	datastore, _ := database.ConnectDB(secrets.Host, secrets.Db_User, secrets.Password, secrets.DbName, secrets.Port)
-	service := core.CoreService(datastore)
+	rabbitService := events.NewRabbitMqService("amqp://guest:guest@localhost:5673")
+	service := core.CoreService(datastore, rabbitService)
 	resolver := graph.NewResolver(service)
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
