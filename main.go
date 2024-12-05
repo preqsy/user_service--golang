@@ -20,7 +20,7 @@ func main() {
 	const defaultPort = "8080"
 
 	datastore, _ := database.ConnectDB(secrets.Host, secrets.Db_User, secrets.Password, secrets.DbName, secrets.Port)
-	rabbitService := events.NewRabbitMqService("amqp://guest:guest@localhost:5673")
+	rabbitService := events.NewRabbitMqService(secrets.RabbitmqUrl)
 	service := core.CoreService(datastore, rabbitService)
 	resolver := graph.NewResolver(service)
 

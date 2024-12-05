@@ -13,11 +13,12 @@ import (
 var ServiceName = "user_service"
 
 type Secrets struct {
-	Db_User  string `json:"USER" envconfig:"DB_USER"`
-	DbName   string `json:"DBNAME" envconfig:"DBNAME"`
-	Password string `json:"PASSWORD" envconfig:"PASSWORD"`
-	Host     string `json:"HOST" envconfig:"HOST"`
-	Port     string `json:"PORT" envconfig:"PORT"`
+	Db_User     string `json:"USER" envconfig:"DB_USER"`
+	DbName      string `json:"DBNAME" envconfig:"DBNAME"`
+	Password    string `json:"PASSWORD" envconfig:"PASSWORD"`
+	Host        string `json:"HOST" envconfig:"HOST"`
+	Port        string `json:"PORT" envconfig:"PORT"`
+	RabbitmqUrl string `json:"RABBITMQURL" envconfig:"RABBITMQURL"`
 }
 
 var ss Secrets
@@ -38,6 +39,7 @@ func init() {
 	ss.Password = os.Getenv("PASSWORD")
 	ss.Host = os.Getenv("HOST")
 	ss.Port = os.Getenv("PORT")
+	ss.RabbitmqUrl = os.Getenv("RABBITMQURL")
 }
 
 func GetSecrets() Secrets {
